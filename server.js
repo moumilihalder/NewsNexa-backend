@@ -23,6 +23,9 @@ async function fetchNews(country, category) {
   const response = await axios.get(TOP_HEADLINES_URL, { params });
   return response.data;
 }
+app.get("/", (req, res) => {
+  res.send("News API server is running!");
+});
 
 // Category route — India → US → Global fallback
 app.get("/category/:category", async (req, res) => {
