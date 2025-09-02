@@ -14,15 +14,13 @@ const EVERYTHING_URL = "https://newsapi.org/v2/everything";
 
 // Helper function to fetch category news
 async function fetchNews(country, category) {
-  const params = {
-    apiKey: NEWS_API_KEY,
-    category,
-  };
+  const params = { apiKey: NEWS_API_KEY, category };
   if (country) params.country = country;
 
   const response = await axios.get(TOP_HEADLINES_URL, { params });
   return response.data;
 }
+
 app.get("/", (req, res) => {
   res.send("News API server is running!");
 });
@@ -48,7 +46,6 @@ app.get("/category/:category", async (req, res) => {
   }
 });
 
-
 // Search route with fallback
 app.get("/search", async (req, res) => {
   const query = req.query.q;
@@ -63,8 +60,8 @@ app.get("/search", async (req, res) => {
         q: query,
         language: "en",
         sortBy: "publishedAt",
-        pageSize: 20
-      }
+        pageSize: 20,
+      },
     });
 
     let articles = newsApiRes.data.articles || [];
@@ -76,8 +73,8 @@ app.get("/search", async (req, res) => {
           q: query,
           lang: "en",
           max: 20,
-          apikey: GNEWS_API_KEY
-        }
+          apikey: GNEWS_API_KEY,
+        },
       });
       articles = gnewsRes.data.articles || [];
     }
@@ -89,4 +86,11 @@ app.get("/search", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+// Only run locally, NOT on Vercel
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+// ✅ Export for Vercel
+module.exports = app;
